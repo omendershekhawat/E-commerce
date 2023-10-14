@@ -1,22 +1,90 @@
 import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-// import './DB/config.js'
-import productRouter from "./productRouter.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express"
 
 
-const connection = mongoose.connect("mongodb://127.0.0.1:27017/e-commerce")
 
-const port = 4000
+const app = express();
+app.use(express.json());
 
-const app = express()
-app.use(express.json())
-app.use(cors())
+let cars = [
+    {id :1 , model:"tata"},       
+    {id :2 , model:"kia"},
+    {id :3 , model:"mahindra"}
+]
 
-app.use("/product", productRouter)
 
-connection.then(() => {
-    app.listen(port, () =>
-        console.log("Server started at port " + port))
+const options = {
+    swaggerDefinition:{
+        openapi: "3.0.0",
+        info:{
+            title: "Node.js API project",
+            version: "1.0.0"
+        },
+        servers:[
+            {
+                url: "http://localhost:8080/"
+            }
+        ]
+    },
+    apis:[
+        "./index.js"
+    ]
+};
+
+
+//.....................creating swegger........................//
+const swaggerSpec = swaggerJSDoc(options);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+
+//..............simple get method..................//
+/**
+ * components:
+ *    schemas:
+ *       car: 
+ *         type: object
+ *         properties:
+ *            id:
+ *              type: string
+ *            model:
+ *              type: string
+ *               
+ *           
+ */
+
+
+
+
+
+
+/**
+ * @swagger
+ * /data:
+ *     get:
+ *       summary: get book information
+ *       description: this API returns book information.
+ *       responses:
+ *        200:
+ *         description: successful response with book data.
+ *         content:
+ *               application/json:
+ *                 schema:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/car'
+ *                        
+: */
+
+//...........get data............................//
+
+app.get("/data", (req, res)=>{
+    res.status(200).json(cars);
+    console.log("hello")
+});
+
+app.listen(8080,() =>{
+    console.log("server has started on 8080")
 })
-.catch((err) => console.log("DB ERROR: " + err));
+
+

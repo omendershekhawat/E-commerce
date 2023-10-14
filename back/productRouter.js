@@ -11,7 +11,7 @@ productRouter.post("/add", async (req, res) => {
     let productToAdd = new productModel(req.body)
     let result = await productToAdd.save()
     console.log(result);
-    res.send("Post REQUEST IS RIUNNING");
+    res.send(result);
 })
 
 
